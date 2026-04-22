@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Unmuted — Share a story</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --ink: #0b0f14;
+      --panel: #121826;
+      --rule: #243044;
+      --paper: #e8edf4;
+      --mist: #9aa7b6;
+      --steel: #6b7785;
+      --signal: #4da3ff;
+      --signal-hover: #6bb0ff;
+      --watch: #f2c14e;
+      --alert: #ff5a6a;
+      --radius: 12px;
+      --focus: 0 0 0 3px rgba(77, 163, 255, 0.35);
+    }
+
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Inter, system-ui, sans-serif;
+      background: var(--ink);
+      color: var(--paper);
+      line-height: 1.5;
+      font-size: 15px;
+    }
+
+    .site-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 16px 20px;
+      border-bottom: 1px solid var(--rule);
+      background: var(--panel);
+    }
+
+    .site-nav a {
+      color: var(--mist);
+      text-decoration: none;
+      font-size: 0.9rem;
+      font-weight: 500;
+    }
+
+    .site-nav a:hover {
+      color: var(--paper);
+    }
+
+    .site-nav .brand {
+      color: var(--paper);
+      font-weight: 600;
+    }
+
+    .wrap {
+      max-width: 640px;
+      margin: 0 auto;
+      padding: 32px 20px 80px;
+    }
+
+    .agreement {
+      padding: 16px 18px;
+      margin-bottom: 24px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      background: var(--panel);
+      font-size: 0.88rem;
+      color: var(--mist);
+    }
+
+    .agreement a {
+      color: var(--signal);
+      font-weight: 500;
+      text-decoration: none;
+    }
+
+    .agreement a:hover {
+      text-decoration: underline;
+      color: var(--signal-hover);
+    }
+
+    h1 {
+      font-size: 1.5rem;
+      font-weight: 600;
+      margin: 0 0 8px;
+      letter-spacing: -0.02em;
+    }
+
+    .lede {
+      color: var(--mist);
+      margin: 0 0 28px;
+      font-size: 0.95rem;
+    }
+
+    form {
+      display: flex;
+      flex-direction: column;
+      gap: 22px;
+    }
+
+    .field {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    label {
+      font-weight: 500;
+      font-size: 0.9rem;
+    }
+
+    .hint {
+      font-size: 0.8rem;
+      color: var(--steel);
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    .warn {
+      color: var(--watch);
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      padding: 12px 14px;
+      border-radius: var(--radius);
+      border: 1px solid var(--rule);
+      background: var(--panel);
+      color: var(--paper);
+      font: inherit;
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--steel);
+    }
+
+    textarea {
+      min-height: 200px;
+      resize: vertical;
+    }
+
+    select {
+      cursor: pointer;
+    }
+
+    input:focus,
+    select:focus,
+    textarea:focus {
+      outline: none;
+      border-color: var(--signal);
+      box-shadow: var(--focus);
+    }
+
+    .file {
+      padding: 14px;
+      border: 1px dashed var(--rule);
+      border-radius: var(--radius);
+      background: rgba(18, 24, 38, 0.65);
+    }
+
+    input[type="file"] {
+      font: inherit;
+      color: var(--mist);
+      width: 100%;
+    }
+
+    .toggle-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px;
+      border: 1px solid var(--rule);
+      border-radius: var(--radius);
+      background: var(--panel);
+    }
+
+    .toggle-row input {
+      width: 18px;
+      height: 18px;
+      margin-top: 3px;
+      accent-color: var(--signal);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    .toggle-copy strong {
+      display: block;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      margin-top: 8px;
+    }
+
+    button[type="submit"] {
+      font: inherit;
+      font-weight: 600;
+      padding: 12px 20px;
+      border: none;
+      border-radius: var(--radius);
+      background: var(--signal);
+      color: var(--ink);
+      cursor: pointer;
+    }
+
+    button[type="submit"]:hover {
+      background: var(--signal-hover);
+    }
+
+    button.secondary {
+      background: transparent;
+      color: var(--paper);
+      border: 1px solid var(--rule);
+    }
+
+    button.secondary:hover {
+      border-color: var(--mist);
+    }
+
+    .error {
+      font-size: 0.8rem;
+      color: var(--alert);
+      margin: 0;
+      display: none;
+    }
+
+    .field.invalid .error { display: block; }
+    .field.invalid input,
+    .field.invalid select,
+    .field.invalid textarea {
+      border-color: var(--alert);
+    }
+
+    footer.note {
+      margin-top: 32px;
+      font-size: 0.75rem;
+      color: var(--steel);
+      max-width: 52ch;
+    }
+  </style>
+</head>
+<body>
+  <header class="site-nav">
+    <a class="brand" href="share-story-form.html">Unmuted</a>
+    <a href="community-rules.html">Community rules</a>
+  </header>
+
+  <div class="wrap">
+    <h1>Share a story</h1>
+    <p class="lede">
+      Describe what happened in your own words. You can stay anonymous and redact details before anything goes live.
+    </p>
+
+    <p class="agreement">
+      <strong style="color:var(--paper);">Before you post:</strong> Unmuted is for real experiences shared responsibly.
+      By submitting, you agree to our <a href="community-rules.html">Community rules</a> (privacy, no harassment or doxxing, first-person honesty, and how we moderate).
+    </p>
+
+    <form id="story-form" novalidate>
+      <div class="field" data-field="title">
+        <label for="title">Title</label>
+        <p class="hint">A short, neutral summary (e.g. &ldquo;Promotion process after reporting an incident&rdquo;). Avoid unique identifiers.</p>
+        <input
+          id="title"
+          name="title"
+          type="text"
+          autocomplete="off"
+          maxlength="120"
+          required
+          placeholder="Summarize the situation in one line"
+        />
+        <p class="error" data-error-for="title">Add a title (up to 120 characters).</p>
+      </div>
+
+      <div class="field" data-field="category">
+        <label for="category">Category</label>
+        <p class="hint">Helps readers find patterns. You can add more detail in the story.</p>
+        <select id="category" name="category" required>
+          <option value="" disabled selected>Select a category</option>
+          <option value="workplace-culture">Workplace — culture &amp; norms</option>
+          <option value="workplace-safety">Workplace — health &amp; safety</option>
+          <option value="workplace-fairness">Workplace — pay, roles &amp; fairness</option>
+          <option value="workplace-retaliation">Workplace — retaliation &amp; pressure</option>
+          <option value="workplace-discrimination">Workplace — discrimination &amp; harassment</option>
+          <option value="society-services">Society — public services &amp; institutions</option>
+          <option value="society-community">Society — community &amp; civic life</option>
+          <option value="other">Other / cross-cutting</option>
+        </select>
+        <p class="error" data-error-for="category">Choose a category.</p>
+      </div>
+
+      <div class="field" data-field="story">
+        <label for="story">Story</label>
+        <p class="hint">
+          Include: what happened, when/where in general terms, who was involved <em>only as needed</em>, what you did, and the outcome if known.
+          If you are unsure, use roles (&ldquo;a manager&rdquo;) instead of names.
+        </p>
+        <textarea
+          id="story"
+          name="story"
+          required
+          minlength="80"
+          maxlength="20000"
+          placeholder="Context: &#10;What happened: &#10;What I tried: &#10;Outcome: &#10;&#10;(Remove or generalize anything that could put you or others at risk.)"
+        ></textarea>
+        <p class="error" data-error-for="story">Write at least 80 characters so readers have enough context.</p>
+      </div>
+
+      <div class="field" data-field="evidence">
+        <label for="evidence">Evidence upload (optional)</label>
+        <p class="hint warn">
+          Files are stored securely and are not shown publicly unless you explicitly attach them to a published version.
+          Redact sensitive metadata if possible. Do not upload illegal material or others&rsquo; private data without right or consent.
+        </p>
+        <div class="file">
+          <input
+            id="evidence"
+            name="evidence"
+            type="file"
+            multiple
+            accept=".pdf,.png,.jpg,.jpeg,.webp,.txt"
+          />
+        </div>
+        <p class="hint">Accepted: PDF, PNG, JPG, WebP, TXT. Max size should be enforced on the server (e.g. 10–25 MB per file).</p>
+      </div>
+
+      <div class="field" data-field="anonymous">
+        <div class="toggle-row">
+          <input type="checkbox" id="anonymous" name="anonymous" checked />
+          <div class="toggle-copy">
+            <strong>Post anonymously</strong>
+            <span class="hint" style="margin:0;color:var(--mist);">
+              Your display name and profile link stay hidden on this post. Moderators may still see account signals for safety and abuse prevention.
+            </span>
+          </div>
+        </div>
+      </div>
+
+      <div class="actions">
+        <button type="submit">Continue to preview</button>
+        <button type="button" class="secondary" id="save-draft">Save draft</button>
+      </div>
+    </form>
+
+    <footer class="note">
+      <a href="community-rules.html" style="color:var(--signal);font-weight:500;text-decoration:none;">Community rules</a>
+      — required reading for anyone who posts.
+      This form is a UI scaffold; wire uploads to encrypted storage, server-side validation, virus scanning, and moderation before publishing.
+    </footer>
+  </div>
+
+  <script>
+    (function () {
+      var form = document.getElementById("story-form");
+      var title = document.getElementById("title");
+      var category = document.getElementById("category");
+      var story = document.getElementById("story");
+      var anonymous = document.getElementById("anonymous");
+
+      function setInvalid(fieldName, invalid) {
+        var el = document.querySelector('.field[data-field="' + fieldName + '"]');
+        if (!el) return;
+        el.classList.toggle("invalid", invalid);
+      }
+
+      function validate() {
+        var ok = true;
+        var t = title.value.trim();
+        if (!t) {
+          setInvalid("title", true);
+          ok = false;
+        } else setInvalid("title", false);
+
+        if (!category.value) {
+          setInvalid("category", true);
+          ok = false;
+        } else setInvalid("category", false);
+
+        var s = story.value.trim();
+        if (s.length < 80) {
+          setInvalid("story", true);
+          ok = false;
+        } else setInvalid("story", false);
+
+        return ok;
+      }
+
+      form.addEventListener("submit", function (e) {
+        e.preventDefault();
+        if (!validate()) return;
+
+        var payload = {
+          title: title.value.trim(),
+          category: category.value,
+          story: story.value.trim(),
+          anonymous: anonymous.checked,
+          evidenceFileCount: document.getElementById("evidence").files.length,
+        };
+
+        console.log("Story draft payload (client demo only):", payload);
+        alert("Validation passed. Next step: preview screen + server submit.\n\nOpen the console to see the payload object.");
+      });
+
+      document.getElementById("save-draft").addEventListener("click", function () {
+        validate();
+        alert("Draft save: connect to your backend or localStorage.");
+      });
+    })();
+  </script>
+</body>
+</html>

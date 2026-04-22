@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme inline {
+  --color-ink: #0b0f14;
+  --color-panel: #121826;
+  --color-rule: #243044;
+  --color-paper: #e8edf4;
+  --color-mist: #9aa7b6;
+  --color-steel: #6b7785;
+  --color-signal: #4da3ff;
+  --color-signal-hover: #6bb0ff;
+  --color-watch: #f2c14e;
+  --color-alert: #ff5a6a;
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+}
+
+html {
+  scroll-padding-top: 5.5rem;
+}
+
+body {
+  min-height: 100%;
+  background-color: var(--color-ink);
+  color: var(--color-paper);
+}
+
+/* Baseline focus for unstyled links in legacy / long-form copy */
+:where(a:not([class])) {
+  color: var(--color-signal);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+:where(a:not([class])):hover {
+  color: var(--color-signal-hover);
+}
+
+:where(a:not([class])):focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+  border-radius: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}

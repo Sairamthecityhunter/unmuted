@@ -1,0 +1,3 @@
+export const MIN_COMMENT_BODY_LENGTH = 10;
+export const MAX_COMMENT_BODY_LENGTH = 8000;
+export const MAX_COMMENT_DISPLAY_NAME_LENGTH = 80;
