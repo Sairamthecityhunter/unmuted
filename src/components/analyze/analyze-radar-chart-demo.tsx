@@ -3,19 +3,12 @@
 import dynamic from "next/dynamic";
 import { Legend, PolarAngleAxis, PolarGrid, PolarRadiusAxis, Radar, RadarChart } from "recharts";
 
+import { UNMUTED_RADAR_BY_THEME } from "@/lib/analyze/unmuted-chart-demo-data";
+
 const RechartsDevtools = dynamic(
   () => import("@recharts/devtools").then((mod) => mod.RechartsDevtools),
   { ssr: false },
 );
-
-const SAMPLE_DATA = [
-  { subject: "Math", A: 120, B: 110, fullMark: 150 },
-  { subject: "Chinese", A: 98, B: 130, fullMark: 150 },
-  { subject: "English", A: 86, B: 130, fullMark: 150 },
-  { subject: "Geography", A: 99, B: 100, fullMark: 150 },
-  { subject: "Physics", A: 85, B: 90, fullMark: 150 },
-  { subject: "History", A: 65, B: 85, fullMark: 150 },
-] as const;
 
 export type AnalyzeRadarChartDemoProps = {
   isAnimationActive?: boolean;
@@ -36,32 +29,34 @@ export function AnalyzeRadarChartDemo({ isAnimationActive = true }: AnalyzeRadar
           Radar chart (sample)
         </h2>
         <p className="mt-1 text-xs text-steel">
-          Two series (A / B) by subject. Devtools load in development only.
+          Story activity by theme — <span className="text-mist">last 30 days</span> vs{" "}
+          <span className="text-mist">prior 30 days</span> (illustrative). Devtools load in
+          development only.
         </p>
       </header>
       <div className="flex min-h-[min(70vh,480px)] min-w-0 justify-center rounded-xl border border-rule bg-panel/40 p-4">
         <RadarChart
           style={{ width: "100%", maxWidth: "500px", maxHeight: "70vh", aspectRatio: 1 }}
           responsive
-          data={[...SAMPLE_DATA]}
+          data={[...UNMUTED_RADAR_BY_THEME]}
         >
           <PolarGrid />
           <PolarAngleAxis dataKey="subject" />
           <PolarRadiusAxis angle={30} domain={[0, 150]} />
           <Radar
-            name="Mike"
-            dataKey="A"
-            stroke="#8884d8"
-            fill="#8884d8"
-            fillOpacity={0.6}
+            name="Last 30 days"
+            dataKey="recent"
+            stroke="#4da3ff"
+            fill="#4da3ff"
+            fillOpacity={0.55}
             isAnimationActive={isAnimationActive}
           />
           <Radar
-            name="Lily"
-            dataKey="B"
-            stroke="#82ca9d"
-            fill="#82ca9d"
-            fillOpacity={0.6}
+            name="Prior 30 days"
+            dataKey="prior"
+            stroke="#5ec8d3"
+            fill="#5ec8d3"
+            fillOpacity={0.45}
             isAnimationActive={isAnimationActive}
           />
           <Legend />

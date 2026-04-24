@@ -11,6 +11,7 @@ const CHART_TYPES: readonly {
   hash: string;
 }[] = [
   { label: "BarChart", hash: "recharts-barchart" },
+  { label: "BarChart · sample", hash: "recharts-barchart-sample" },
   { label: "AreaChart · sample", hash: "recharts-areachart-sample" },
   { label: "LineChart", hash: "recharts-linechart" },
   { label: "ComposedChart", hash: "recharts-composedchart" },

@@ -4,31 +4,12 @@ import dynamic from "next/dynamic";
 import type { TooltipIndex } from "recharts";
 import { Pie, PieChart, Tooltip } from "recharts";
 
+import { UNMUTED_PIE_INNER, UNMUTED_PIE_OUTER } from "@/lib/analyze/unmuted-chart-demo-data";
+
 const RechartsDevtools = dynamic(
   () => import("@recharts/devtools").then((mod) => mod.RechartsDevtools),
   { ssr: false },
 );
-
-const DATA_OUTER = [
-  { name: "Group A", value: 400 },
-  { name: "Group B", value: 300 },
-  { name: "Group C", value: 300 },
-  { name: "Group D", value: 200 },
-] as const;
-
-const DATA_INNER = [
-  { name: "A1", value: 100 },
-  { name: "A2", value: 300 },
-  { name: "B1", value: 100 },
-  { name: "B2", value: 80 },
-  { name: "B3", value: 40 },
-  { name: "B4", value: 30 },
-  { name: "B5", value: 50 },
-  { name: "C1", value: 100 },
-  { name: "C2", value: 200 },
-  { name: "D1", value: 150 },
-  { name: "D2", value: 50 },
-] as const;
 
 export type AnalyzeNestedPieChartDemoProps = {
   isAnimationActive?: boolean;
@@ -53,7 +34,8 @@ export function AnalyzeNestedPieChartDemo({
           Nested pie chart (sample)
         </h2>
         <p className="mt-1 text-xs text-steel">
-          Outer ring (groups) and inner ring (breakdown). Devtools load in development only.
+          Outer ring: broad story groupings on Unmuted. Inner ring: themes (illustrative counts).
+          Devtools load in development only.
         </p>
       </header>
       <div className="flex min-h-[min(80vh,520px)] min-w-0 justify-center rounded-xl border border-rule bg-panel/40 p-4">
@@ -68,7 +50,7 @@ export function AnalyzeNestedPieChartDemo({
           responsive
         >
           <Pie
-            data={[...DATA_OUTER]}
+            data={[...UNMUTED_PIE_OUTER]}
             dataKey="value"
             cx="50%"
             cy="50%"
@@ -77,7 +59,7 @@ export function AnalyzeNestedPieChartDemo({
             isAnimationActive={isAnimationActive}
           />
           <Pie
-            data={[...DATA_INNER]}
+            data={[...UNMUTED_PIE_INNER]}
             dataKey="value"
             cx="50%"
             cy="50%"

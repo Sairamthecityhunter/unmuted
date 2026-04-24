@@ -12,28 +12,12 @@ import {
   ZAxis,
 } from "recharts";
 
+import { UNMUTED_SCATTER_COMMUNITY, UNMUTED_SCATTER_FEATURED } from "@/lib/analyze/unmuted-chart-demo-data";
+
 const RechartsDevtools = dynamic(
   () => import("@recharts/devtools").then((mod) => mod.RechartsDevtools),
   { ssr: false },
 );
-
-const DATA_01 = [
-  { x: 100, y: 200, z: 200 },
-  { x: 120, y: 100, z: 260 },
-  { x: 170, y: 300, z: 400 },
-  { x: 140, y: 250, z: 280 },
-  { x: 150, y: 400, z: 500 },
-  { x: 110, y: 280, z: 200 },
-] as const;
-
-const DATA_02 = [
-  { x: 200, y: 260, z: 240 },
-  { x: 240, y: 290, z: 220 },
-  { x: 190, y: 290, z: 250 },
-  { x: 198, y: 250, z: 210 },
-  { x: 180, y: 280, z: 260 },
-  { x: 210, y: 220, z: 230 },
-] as const;
 
 export type AnalyzeScatterChartDemoProps = {
   isAnimationActive?: boolean;
@@ -54,7 +38,10 @@ export function AnalyzeScatterChartDemo({ isAnimationActive = true }: AnalyzeSca
           Scatter chart (sample)
         </h2>
         <p className="mt-1 text-xs text-steel">
-          Two series (A school / B school). Devtools load in development only.
+          Each point: monthly <span className="text-mist">submissions</span>,{" "}
+          <span className="text-mist">Support</span> reactions, and{" "}
+          <span className="text-mist">Relate</span> (bubble size). Two illustrative cohorts. Devtools
+          load in development only.
         </p>
       </header>
       <div className="min-w-0 rounded-xl border border-rule bg-panel/40 p-4">
@@ -69,21 +56,21 @@ export function AnalyzeScatterChartDemo({ isAnimationActive = true }: AnalyzeSca
           }}
         >
           <CartesianGrid strokeDasharray="3 3" />
-          <XAxis dataKey="x" type="number" name="stature" unit="cm" />
-          <YAxis dataKey="y" type="number" name="weight" unit="kg" width="auto" />
-          <ZAxis dataKey="z" type="number" range={[64, 144]} name="score" unit="km" />
+          <XAxis dataKey="x" type="number" name="Submissions" unit=" posts" />
+          <YAxis dataKey="y" type="number" name="Support" unit="" width="auto" />
+          <ZAxis dataKey="z" type="number" range={[64, 144]} name="Relate" unit="" />
           <Tooltip cursor={{ strokeDasharray: "3 3" }} />
           <Legend />
           <Scatter
-            name="A school"
-            data={[...DATA_01]}
-            fill="#8884d8"
+            name="Community posts"
+            data={[...UNMUTED_SCATTER_COMMUNITY]}
+            fill="#4da3ff"
             isAnimationActive={isAnimationActive}
           />
           <Scatter
-            name="B school"
-            data={[...DATA_02]}
-            fill="#82ca9d"
+            name="Featured / seed stories"
+            data={[...UNMUTED_SCATTER_FEATURED]}
+            fill="#5ec8d3"
             isAnimationActive={isAnimationActive}
           />
           {process.env.NODE_ENV === "development" ? <RechartsDevtools /> : null}
