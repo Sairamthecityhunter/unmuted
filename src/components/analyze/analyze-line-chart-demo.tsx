@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { UNMUTED_MONTHLY_ENGAGEMENT } from "@/lib/analyze/unmuted-chart-demo-data";
+import type { MonthlyEngagementRow } from "@/lib/analyze/derive-live-chart-data";
 
 const RechartsDevtools = dynamic(
   () => import("@recharts/devtools").then((mod) => mod.RechartsDevtools),
@@ -19,13 +19,11 @@ const RechartsDevtools = dynamic(
 );
 
 export type AnalyzeLineChartDemoProps = {
+  data: MonthlyEngagementRow[];
   isAnimationActive?: boolean;
 };
 
-/**
- * Recharts LineChart sample (monthly submissions vs Support) on `/analyze`.
- */
-export function AnalyzeLineChartDemo({ isAnimationActive = true }: AnalyzeLineChartDemoProps) {
+export function AnalyzeLineChartDemo({ data, isAnimationActive = true }: AnalyzeLineChartDemoProps) {
   return (
     <section
       id="recharts-linechart"
@@ -34,19 +32,18 @@ export function AnalyzeLineChartDemo({ isAnimationActive = true }: AnalyzeLineCh
     >
       <header className="mb-6">
         <h2 id="analyze-line-demo-heading" className="text-sm font-semibold text-paper">
-          Line chart (sample)
+          Line chart
         </h2>
         <p className="mt-1 text-xs text-steel">
-          Same illustrative series as the bar sample —{" "}
-          <span className="text-mist">submissions</span> and{" "}
-          <span className="text-mist">Support</span> reactions. Devtools load in development only.
+          Same monthly series as the bar chart — submissions and Support totals by first-publish
+          month.
         </p>
       </header>
       <div className="min-w-0 rounded-xl border border-rule bg-panel/40 p-4">
         <LineChart
           style={{ width: "100%", maxWidth: "700px", maxHeight: "70vh", aspectRatio: 1.618 }}
           responsive
-          data={[...UNMUTED_MONTHLY_ENGAGEMENT]}
+          data={data}
           margin={{
             top: 5,
             right: 30,

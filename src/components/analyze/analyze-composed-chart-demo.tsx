@@ -13,7 +13,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { UNMUTED_MONTHLY_ENGAGEMENT } from "@/lib/analyze/unmuted-chart-demo-data";
+import type { MonthlyEngagementRow } from "@/lib/analyze/derive-live-chart-data";
 
 const RechartsDevtools = dynamic(
   () => import("@recharts/devtools").then((mod) => mod.RechartsDevtools),
@@ -21,13 +21,12 @@ const RechartsDevtools = dynamic(
 );
 
 export type AnalyzeComposedChartDemoProps = {
+  data: MonthlyEngagementRow[];
   isAnimationActive?: boolean;
 };
 
-/**
- * Recharts ComposedChart sample on `/analyze`; Charts menu links to `#recharts-composedchart`.
- */
 export function AnalyzeComposedChartDemo({
+  data,
   isAnimationActive = true,
 }: AnalyzeComposedChartDemoProps) {
   return (
@@ -38,20 +37,19 @@ export function AnalyzeComposedChartDemo({
     >
       <header className="mb-6">
         <h2 id="analyze-composed-demo-heading" className="text-sm font-semibold text-paper">
-          Composed chart (sample)
+          Composed chart
         </h2>
         <p className="mt-1 text-xs text-steel">
           Area <span className="text-mist">Relate</span>, bar{" "}
           <span className="text-mist">submissions</span>, line{" "}
-          <span className="text-mist">Support</span> (illustrative). Devtools load in development
-          only.
+          <span className="text-mist">Support</span> — monthly totals for stories posted that month.
         </p>
       </header>
       <div className="min-w-0 rounded-xl border border-rule bg-panel/40 p-4">
         <ComposedChart
           style={{ width: "100%", maxWidth: "700px", maxHeight: "70vh", aspectRatio: 1.618 }}
           responsive
-          data={[...UNMUTED_MONTHLY_ENGAGEMENT]}
+          data={data}
         >
           <CartesianGrid stroke="rgba(148, 163, 184, 0.15)" strokeDasharray="3 3" />
           <XAxis dataKey="name" />

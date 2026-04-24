@@ -10,7 +10,8 @@ export type CategoryDatum = {
   share: number;
 };
 
-const SHORT: Record<StoryCategoryId, string> = {
+/** Short labels for chart axes and compact UI. */
+export const STORY_CATEGORY_SHORT_LABEL: Record<StoryCategoryId, string> = {
   workplace: "Workplace",
   "company-culture": "Culture",
   "job-issues": "Job issues",
@@ -48,7 +49,7 @@ export function computeCategoryDistribution(
     return {
       id: c.id,
       label: c.label,
-      shortLabel: SHORT[c.id],
+      shortLabel: STORY_CATEGORY_SHORT_LABEL[c.id],
       count,
       share,
     };

@@ -11,7 +11,7 @@ import {
   YAxis,
 } from "recharts";
 
-import { UNMUTED_MONTHLY_ENGAGEMENT } from "@/lib/analyze/unmuted-chart-demo-data";
+import type { MonthlyEngagementRow } from "@/lib/analyze/derive-live-chart-data";
 
 const RechartsDevtools = dynamic(
   () => import("@recharts/devtools").then((mod) => mod.RechartsDevtools),
@@ -19,14 +19,14 @@ const RechartsDevtools = dynamic(
 );
 
 export type AnalyzeBarChartDemoProps = {
+  data: MonthlyEngagementRow[];
   isAnimationActive?: boolean;
 };
 
 /**
- * Vertical BarChart sample (monthly submissions vs Support reactions) on `/analyze`.
- * Charts menu live category bar: `#recharts-barchart`.
+ * Vertical bar chart — monthly submissions vs Support totals (`/analyze` live demos).
  */
-export function AnalyzeBarChartDemo({ isAnimationActive = true }: AnalyzeBarChartDemoProps) {
+export function AnalyzeBarChartDemo({ data, isAnimationActive = true }: AnalyzeBarChartDemoProps) {
   return (
     <section
       id="recharts-barchart-sample"
@@ -35,27 +35,36 @@ export function AnalyzeBarChartDemo({ isAnimationActive = true }: AnalyzeBarChar
     >
       <header className="mb-6">
         <h2 id="analyze-bar-demo-heading" className="text-sm font-semibold text-paper">
-          Bar chart (sample)
+          Bar chart
         </h2>
         <p className="mt-1 text-xs text-steel">
-          Illustrative snapshot — <span className="text-mist">new submissions</span> per month and{" "}
-          <span className="text-mist">Support</span> reactions (not live data). Devtools load in
-          development only.
+          <span className="text-mist">Submissions</span> per month and total{" "}
+          <span className="text-mist">Support</span> on stories first published that month.
         </p>
       </header>
       <div className="min-w-0 rounded-xl border border-rule bg-panel/40 p-4">
         <BarChart
           style={{ width: "100%", maxWidth: "700px", maxHeight: "70vh", aspectRatio: 1.618 }}
           responsive
-          data={[...UNMUTED_MONTHLY_ENGAGEMENT]}
+          data={data}
         >
           <CartesianGrid strokeDasharray="3 3" />
           <XAxis dataKey="name" />
           <YAxis width="auto" />
           <Tooltip />
           <Legend />
-          <Bar dataKey="submissions" name="Submissions" fill="#5ec8d3" isAnimationActive={isAnimationActive} />
-          <Bar dataKey="support" name="Support reactions" fill="#4da3ff" isAnimationActive={isAnimationActive} />
+          <Bar
+            dataKey="submissions"
+            name="Submissions"
+            fill="#5ec8d3"
+            isAnimationActive={isAnimationActive}
+          />
+          <Bar
+            dataKey="support"
+            name="Support reactions"
+            fill="#4da3ff"
+            isAnimationActive={isAnimationActive}
+          />
           {process.env.NODE_ENV === "development" ? <RechartsDevtools /> : null}
         </BarChart>
       </div>

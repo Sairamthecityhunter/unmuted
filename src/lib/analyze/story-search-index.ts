@@ -34,6 +34,21 @@ export function buildAnalyzeStorySearchIndex(stories: Story[]): AnalyzeStorySear
   }));
 }
 
+/** Same rules as {@link storyMatchesSearch}, for full {@link Story} rows (e.g. live chart data). */
+export function storyMatchesSearchForStory(story: Story, query: string): boolean {
+  const record: AnalyzeStorySearchRecord = {
+    id: story.id,
+    title: story.title,
+    body: story.body,
+    category: story.category,
+    categoryLabel: LABEL_BY_ID[story.category] ?? story.category,
+    tags: story.tags,
+    createdAt: story.createdAt,
+    company: story.company?.trim() ? story.company.trim() : undefined,
+  };
+  return storyMatchesSearch(record, query);
+}
+
 export function storyMatchesSearch(record: AnalyzeStorySearchRecord, query: string): boolean {
   const raw = query.trim();
   if (!raw) return true;

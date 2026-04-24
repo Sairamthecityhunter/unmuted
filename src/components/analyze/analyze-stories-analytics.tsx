@@ -4,10 +4,13 @@ import dynamic from "next/dynamic";
 import Link from "next/link";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
-import type { AnalyzeStorySearchRecord } from "@/lib/analyze/story-search-index";
-import { storyMatchesSearch } from "@/lib/analyze/story-search-index";
+import { AnalyzeLiveChartDemos } from "@/components/analyze/analyze-live-chart-demos";
+import { storiesFromApiJson } from "@/lib/analyze/normalize-api-stories";
+import {
+  buildAnalyzeStorySearchIndex,
+  storyMatchesSearchForStory,
+} from "@/lib/analyze/story-search-index";
 import { computeCategoryDistribution } from "@/lib/analytics/category-distribution";
-import { STORY_CATEGORIES } from "@/lib/taxonomy/categories";
 import type { Story } from "@/types/story";
 import { cn } from "@/lib/utils/cn";
 
@@ -35,38 +38,12 @@ type ApiStoriesResponse = { stories?: unknown };
 
 const POLL_MS = 45_000;
 
-const CATEGORY_LABEL = Object.fromEntries(STORY_CATEGORIES.map((c) => [c.id, c.label])) as Record<
-  string,
-  string
->;
-
-function normalizeApiStories(raw: unknown): AnalyzeStorySearchRecord[] {
-  if (!raw || !Array.isArray(raw)) return [];
-  return raw
-    .filter((x): x is Record<string, unknown> => x != null && typeof x === "object")
-    .map((s) => {
-      const cat = String(s.category ?? "");
-      const co = s.company != null ? String(s.company).trim() : "";
-      return {
-        id: String(s.id ?? ""),
-        title: String(s.title ?? ""),
-        body: String(s.body ?? ""),
-        category: cat,
-        categoryLabel: CATEGORY_LABEL[cat] ?? cat,
-        tags: Array.isArray(s.tags) ? s.tags.map((t) => String(t)) : [],
-        createdAt: String(s.createdAt ?? ""),
-        company: co.length > 0 ? co : undefined,
-      };
-    })
-    .filter((s) => s.id.length > 0);
-}
-
 export type AnalyzeStoriesAnalyticsProps = {
-  initialRecords: AnalyzeStorySearchRecord[];
+  initialStories: Story[];
 };
 
-export function AnalyzeStoriesAnalytics({ initialRecords }: AnalyzeStoriesAnalyticsProps) {
-  const [records, setRecords] = useState<AnalyzeStorySearchRecord[]>(initialRecords);
+export function AnalyzeStoriesAnalytics({ initialStories }: AnalyzeStoriesAnalyticsProps) {
+  const [stories, setStories] = useState<Story[]>(initialStories);
   const [query, setQuery] = useState("");
   const [fetchError, setFetchError] = useState<string | null>(null);
   /** Avoid `Date` / locale formatting during SSR — they often mismatch the client. */
@@ -77,8 +54,8 @@ export function AnalyzeStoriesAnalytics({ initialRecords }: AnalyzeStoriesAnalyt
       const res = await fetch("/api/stories", { cache: "no-store" });
       if (!res.ok) throw new Error(`HTTP ${res.status}`);
       const json = (await res.json()) as ApiStoriesResponse;
-      const list = normalizeApiStories(json.stories);
-      setRecords(list);
+      const list = storiesFromApiJson(json.stories);
+      setStories(list);
       setClientClockMs(Date.now());
       setFetchError(null);
     } catch {
@@ -103,15 +80,20 @@ export function AnalyzeStoriesAnalytics({ initialRecords }: AnalyzeStoriesAnalyt
     };
   }, [refresh]);
 
-  const filtered = useMemo(() => {
+  const filteredStories = useMemo(() => {
     const q = query.trim();
-    if (!q) return records;
-    return records.filter((r) => storyMatchesSearch(r, q));
-  }, [records, query]);
+    if (!q) return stories;
+    return stories.filter((s) => storyMatchesSearchForStory(s, q));
+  }, [stories, query]);
+
+  const filteredRecords = useMemo(
+    () => buildAnalyzeStorySearchIndex(filteredStories),
+    [filteredStories],
+  );
 
   const chartInput = useMemo(
-    () => filtered.map((r) => ({ category: r.category })) as Pick<Story, "category">[],
-    [filtered],
+    () => filteredStories.map((s) => ({ category: s.category })),
+    [filteredStories],
   );
 
   const { data, total, topLabel } = useMemo(
@@ -119,7 +101,7 @@ export function AnalyzeStoriesAnalytics({ initialRecords }: AnalyzeStoriesAnalyt
     [chartInput],
   );
 
-  const shown = useMemo(() => filtered.slice(0, 20), [filtered]);
+  const shown = useMemo(() => filteredRecords.slice(0, 20), [filteredRecords]);
   const isFiltered = query.trim().length > 0;
 
   return (
@@ -173,9 +155,9 @@ export function AnalyzeStoriesAnalytics({ initialRecords }: AnalyzeStoriesAnalyt
           </label>
           <div className="flex shrink-0 flex-col items-start gap-1 text-xs text-steel sm:items-end">
             <span className="tabular-nums text-mist">
-              {records.length} stor{records.length === 1 ? "y" : "ies"}
+              {stories.length} stor{stories.length === 1 ? "y" : "ies"}
               {isFiltered
-                ? ` · ${filtered.length} in charts${filtered.length !== records.length ? " (filtered)" : ""}`
+                ? ` · ${filteredStories.length} in charts${filteredStories.length !== stories.length ? " (filtered)" : ""}`
                 : ""}
             </span>
             <span
@@ -235,10 +217,10 @@ export function AnalyzeStoriesAnalytics({ initialRecords }: AnalyzeStoriesAnalyt
                 ))}
               </ul>
             )}
-            {filtered.length > shown.length ? (
+            {filteredRecords.length > shown.length ? (
               <p className="border-t border-rule/70 px-4 py-2 text-center text-[11px] text-steel">
-                Showing {shown.length} of {filtered.length} matches. Refine your search to narrow
-                results.
+                Showing {shown.length} of {filteredRecords.length} matches. Refine your search to
+                narrow results.
               </p>
             ) : null}
           </div>
@@ -263,6 +245,8 @@ export function AnalyzeStoriesAnalytics({ initialRecords }: AnalyzeStoriesAnalyt
           showIntroAndCaptions={false}
         />
       </div>
+
+      <AnalyzeLiveChartDemos stories={filteredStories} />
     </>
   );
 }

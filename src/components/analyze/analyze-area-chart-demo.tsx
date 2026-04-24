@@ -4,7 +4,7 @@ import dynamic from "next/dynamic";
 import { useId } from "react";
 import { Area, AreaChart, CartesianGrid, Tooltip, XAxis, YAxis } from "recharts";
 
-import { UNMUTED_MONTHLY_ENGAGEMENT } from "@/lib/analyze/unmuted-chart-demo-data";
+import type { MonthlyEngagementRow } from "@/lib/analyze/derive-live-chart-data";
 
 const RechartsDevtools = dynamic(
   () => import("@recharts/devtools").then((mod) => mod.RechartsDevtools),
@@ -12,13 +12,11 @@ const RechartsDevtools = dynamic(
 );
 
 export type AnalyzeAreaChartDemoProps = {
+  data: MonthlyEngagementRow[];
   isAnimationActive?: boolean;
 };
 
-/**
- * Recharts AreaChart sample (monthly Support vs submissions, gradients) on `/analyze`.
- */
-export function AnalyzeAreaChartDemo({ isAnimationActive = true }: AnalyzeAreaChartDemoProps) {
+export function AnalyzeAreaChartDemo({ data, isAnimationActive = true }: AnalyzeAreaChartDemoProps) {
   const rawId = useId().replace(/[^a-zA-Z0-9_-]/g, "");
   const colorSupport = `colorSupport-${rawId}`;
   const colorSubmissions = `colorSubmissions-${rawId}`;
@@ -31,19 +29,17 @@ export function AnalyzeAreaChartDemo({ isAnimationActive = true }: AnalyzeAreaCh
     >
       <header className="mb-6">
         <h2 id="analyze-area-demo-heading" className="text-sm font-semibold text-paper">
-          Area chart (sample)
+          Area chart
         </h2>
         <p className="mt-1 text-xs text-steel">
-          <span className="text-mist">Support</span> and{" "}
-          <span className="text-mist">submissions</span> with gradients (illustrative). Devtools load
-          in development only.
+          Support and submissions over the same trailing months (stacked feel via gradients).
         </p>
       </header>
       <div className="min-w-0 rounded-xl border border-rule bg-panel/40 p-4">
         <AreaChart
           style={{ width: "100%", maxWidth: "700px", maxHeight: "70vh", aspectRatio: 1.618 }}
           responsive
-          data={[...UNMUTED_MONTHLY_ENGAGEMENT]}
+          data={data}
           margin={{ top: 10, right: 0, left: 0, bottom: 0 }}
         >
           <defs>
